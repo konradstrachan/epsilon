@@ -33,10 +33,10 @@ contract PeanutForwarder {
     }
 
     function createLink() internal {
-        // TODO update with peanut contract
-        address peanutV4Address = address(0x1234);
-        uint256 amount = 0; //address(uint160(bytes20(msg.data[0:20])));
-        address pubKey20 = address(uint160(bytes20(msg.data[20:40])));
+        // Taken from https://github.com/peanutprotocol/peanut-contracts/blob/main/contracts.json
+        address peanutV4Address = address(0x891021b34fEDC18E36C015BFFAA64a2421738906);
+        uint256 amount = uint256(bytes32(msg.data[0:32]));
+        address pubKey20 = address(uint160(bytes20(msg.data[32:52])));
 
         IPeanutV4(peanutV4Address).makeDeposit(address(0), uint8(0), amount, uint256(0), pubKey20);
     }
