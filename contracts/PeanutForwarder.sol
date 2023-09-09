@@ -9,7 +9,7 @@ interface IPeanutV4 {
         uint256 _amount,
         uint256 _tokenId,
         address _pubKey20
-    ) public payable nonReentrant returns (uint256);
+    ) external payable returns (uint256);
 }
 
 contract PeanutForwarder {
@@ -35,7 +35,7 @@ contract PeanutForwarder {
     function createLink() internal {
         // TODO update with peanut contract
         address peanutV4Address = address(0x1234);
-        address amount = address(uint160(bytes20(msg.data[0:20])));
+        uint256 amount = 0; //address(uint160(bytes20(msg.data[0:20])));
         address pubKey20 = address(uint160(bytes20(msg.data[20:40])));
 
         IPeanutV4(peanutV4Address).makeDeposit(address(0), uint8(0), amount, uint256(0), pubKey20);

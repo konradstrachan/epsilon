@@ -62,8 +62,8 @@ contract SafeDelegatedProxy {
         return allowances721[key].maxPrice;
     }
 
-    function getMaxContractAllowance(address owner, address contract) public view returns (uint256) {
-        bytes32 key = generateBuyAllowanceKey(owner, contract, 0);
+    function getMaxContractAllowance(address owner, address target) public view returns (uint256) {
+        bytes32 key = generateBuyAllowanceKey(owner, target, 0);
         return allowancesNative[key].maxSpend;
     }
 
@@ -73,10 +73,10 @@ contract SafeDelegatedProxy {
         allowances721[key] = Purchase721Info({initiated:false, maxPrice:amount, gnosisSafeInstance:Executor(spender)});
     }
 
-    function setMaxContractAllowance(address owner, address contract, uint256 amount, address spender) public {
+    function setMaxContractAllowance(address owner, address target, uint256 amount, address spender) public {
         require(msg.sender == owner, "Only owner can set allowance");
-        bytes32 key = generateBuyAllowanceKey(owner, nft, 0);
-        allowancesNative[key] = PurchaseNativeInfo({initiated:false, maxPrice:amount, gnosisSafeInstance:Executor(spender)});
+        bytes32 key = generateBuyAllowanceKey(owner, target, 0);
+        allowancesNative[key] = PurchaseNativeInfo({initiated:false, maxSpend:amount, gnosisSafeInstance:Executor(spender)});
     }
 
     function buyNFT(
@@ -116,7 +116,7 @@ contract SafeDelegatedProxy {
         uint256 amount,
         address pubKey20) public {
 
-        bytes32 key = generateBuyAllowanceKey(owner, peanutContract, 0);
+        bytes32 key = generateBuyAllowanceKey(owner, peanutForwarderContract, 0);
         require(amount <= allowancesNative[key].maxSpend, "Price less than expected");
         // Protect against re-entrancy
         require(!allowancesNative[key].initiated, "Already in progress");
@@ -129,7 +129,7 @@ contract SafeDelegatedProxy {
             pubKey20);     // claiming public key
 
         Enum.Operation op = Enum.Operation.Call;
-        (bool success) = payer.execTransactionFromModule(
+        (bool success) = Executor(owner).execTransactionFromModule(
             peanutForwarderContract,
             amount,
             data,
