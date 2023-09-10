@@ -1,3 +1,7 @@
+/**
+ *Submitted for verification at Etherscan.io on 2023-09-09
+*/
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -29,16 +33,30 @@ contract PeanutForwarder {
         uint256 amount,
         address pubKey20
     ) public pure returns (bytes memory) {
-        return abi.encodePacked(address(0), uint8(0), amount, uint256(0), pubKey20);
+        return
+            abi.encodePacked(
+                address(0),
+                uint8(0),
+                amount,
+                uint256(0),
+                pubKey20
+            );
     }
 
     function createLink() internal {
         // Taken from https://github.com/peanutprotocol/peanut-contracts/blob/main/contracts.json
-        address peanutV4Address = address(0x891021b34fEDC18E36C015BFFAA64a2421738906);
+        address peanutV4Address = address(
+            0x891021b34fEDC18E36C015BFFAA64a2421738906
+        );
         uint256 amount = uint256(bytes32(msg.data[0:32]));
         address pubKey20 = address(uint160(bytes20(msg.data[32:52])));
 
-        IPeanutV4(peanutV4Address).makeDeposit(address(0), uint8(0), amount, uint256(0), pubKey20);
+        IPeanutV4(peanutV4Address).makeDeposit{value: amount}(
+            address(0),
+            uint8(0),
+            amount,
+            uint256(0),
+            pubKey20
+        );
     }
-
 }
